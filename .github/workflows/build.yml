@@ -1,0 +1,47 @@
+name: build-笺读
+
+# 在 GitHub 云端同时打包 Windows(.exe 安装包)和 Mac M 芯片(aarch64 .dmg)。
+# 触发方式:手动(Actions 页点 Run workflow),或推一个 v* 的 tag。
+on:
+  workflow_dispatch:
+  push:
+    tags: ['v*']
+
+jobs:
+  build:
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - os: macos-14          # Apple Silicon 运行器 → M 芯片 aarch64 .dmg
+            target: aarch64-apple-darwin
+          - os: windows-latest    # Windows → NSIS .exe 安装包
+            target: x86_64-pc-windows-msvc
+    runs-on: ${{ matrix.os }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      - uses: dtolnay/rust-toolchain@stable
+        with:
+          targets: ${{ matrix.target }}
+
+      - name: 安装前端依赖(Tauri CLI)
+        run: npm install
+
+      - name: 用 Tauri 打包
+        uses: tauri-apps/tauri-action@v0
+        with:
+          args: --target ${{ matrix.target }}
+
+      - name: 上传安装包
+        uses: actions/upload-artifact@v4
+        with:
+          name: 笺读-${{ matrix.target }}
+          path: |
+            src-tauri/target/${{ matrix.target }}/release/bundle/**/*.dmg
+            src-tauri/target/${{ matrix.target }}/release/bundle/**/*.exe
+          if-no-files-found: warn

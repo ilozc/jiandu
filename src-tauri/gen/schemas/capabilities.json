@@ -1,0 +1,1 @@
+{"default":{"identifier":"default","description":"主窗口默认能力。自定义命令(本应用自己 #[tauri::command] 注册的)无需在此列出。","local":true,"windows":["main"],"permissions":["core:default"]}}

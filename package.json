@@ -1,0 +1,14 @@
+{
+  "name": "pdf-annotate-desktop",
+  "version": "0.1.0",
+  "private": true,
+  "description": "批注台 · AI 精读 —— 桌面版(数据存本地文件夹)",
+  "scripts": {
+    "tauri": "tauri",
+    "dev": "tauri dev",
+    "build": "tauri build"
+  },
+  "devDependencies": {
+    "@tauri-apps/cli": "^2.11.2"
+  }
+}
